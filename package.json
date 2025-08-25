@@ -1,0 +1,29 @@
+{
+  "type": "module",
+  "scripts": {
+    "check": "npm run tsc && npm run eslint && npm run prettier",
+    "build": "npm run build-js && npm run build-eleventy",
+    "build-js": "npx rollup --config ./config/config-rollup.js",
+    "build-js-dev": "npx rollup --config ./config/config-rollup-dev.js --watch",
+    "build-eleventy": "npx @11ty/eleventy --config config/config-eleventy.js",
+    "build-eleventy-dev": "npx @11ty/eleventy --config config/config-eleventy.js --watch",
+    "dev": "rm -rf public && concurrently -k \"npm run build-js-dev\" \"npm run build-eleventy-dev\"",
+    "eslint": "eslint",
+    "prettier": "prettier -l .",
+    "tsc": "tsc"
+  },
+  "devDependencies": {
+    "@11ty/eleventy": "^3.1.2",
+    "@rollup/plugin-commonjs": "^28.0.6",
+    "@rollup/plugin-node-resolve": "^16.0.1",
+    "@rollup/plugin-terser": "^0.4.4",
+    "buffer": "^6.0.3",
+    "concurrently": "^9.2.1",
+    "eslint": "^9.34.0",
+    "prettier": "^3.6.2",
+    "rollup": "^4.48.1",
+    "string_decoder": "^1.3.0",
+    "svgo-ll": "^6.0.1",
+    "typescript": "^5.9.2"
+  }
+}

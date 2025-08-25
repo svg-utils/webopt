@@ -1,0 +1,410 @@
+---
+layout: page.njk
+title: svgo-ll web optimizer
+---
+
+<style>
+  dialog {
+    text-align: center;
+  }
+  fieldset {
+    margin-bottom: 0.5rem;
+    width: 100%;
+  }
+  form {
+    display: flex;
+    flex-wrap: wrap;
+    /* 1rem works for input/output radio buttons */
+    column-gap: 1rem;
+  }
+  hr {
+    margin: 0;
+    width: 100%;
+  }
+  iframe {
+    width: 100%;
+  }
+  input[type="text"],
+  input[type="url"] {
+    width: 100%;
+  }
+  input[type="checkbox"] {
+    margin-right: 0.25rem;
+  }
+  span.histobar {
+    display: inline-block;
+    background-color: #bbb;
+    white-space: nowrap;
+  }
+  span.histopct {
+    display: inline-block;
+    text-align: right;
+    width: 4rem;
+  }
+  textarea {
+    min-height: 5rem;
+    width: 100%;
+  }
+  .data {
+    font-weight: bold;
+  }
+  .flex {
+    display: flex;
+    align-items: center;
+    column-gap: 0.5rem;
+    justify-content: space-between;
+  }
+  .fullwidth {
+    width: 100%;
+  }
+  .info-table {
+    display: grid;
+    grid-template-columns: minmax(20px, max-content) minmax(20px, max-content);
+    column-gap: 0.5rem;
+    grid-auto-rows: min-content;
+  }
+  #info-plugin-times-content {
+    display: grid;
+    grid-template-columns: max-content 1fr;
+  }
+  .navbar {
+    padding: 0;
+  }
+  .main-content {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    row-gap: 0.25rem;
+  }
+  .plugin-checkboxes {
+    display: flex;
+    flex-wrap: wrap;
+  }
+  .plugin-checkboxes div {
+    width: 17rem;
+  }
+  .right {
+    text-align: right;
+  }
+  .section {
+    display: flex;
+    width: 100%;
+  }
+  .section[inert] {
+    opacity: 0.2;
+  }
+  .section-body {
+    display: flex;
+    flex: 1 1 auto;
+    flex-wrap: wrap;
+  }
+  .section-body > div,
+  .section-body textarea {
+    flex: 1 1 auto;
+  }
+  .section-buttons {
+    white-space: nowrap;
+  }
+  .section-buttons button {
+    border: none;
+    padding: 0;
+  }
+  .section-buttons button:disabled {
+    opacity: 25%;
+  }
+  .section-content {
+    background-color: #eee;
+    border-radius: 0.25rem;
+    display: flex;
+    flex-direction: column;
+    margin: 2px 0;
+    padding: 0 0.25rem 0.25rem;
+    width: 100%;
+  }
+  .section-hdr {
+    display: flex;
+    justify-content: space-between;
+  }
+
+  @media (min-width: 768px) {
+    .section.half {
+      width: 49.9%;
+    }
+  }
+</style>
+<div>
+  <div id="optimize" class="main-content container-fluid">
+    <dialog id="feedback" style="padding: 2px">
+      <div>Copied to clipboard!</div>
+    </dialog>
+    <div id="config" class="section">
+      <div class="section-content">
+        <div class="section-hdr">
+          <div
+            style="
+              overflow: hidden;
+              text-overflow: ellipsis;
+              white-space: nowrap;
+              margin-right: 1rem;
+            "
+          >
+            <span class="hdr-label">Command:</span>
+            <span id="command-line" class="data" style="white-space: nowrap"
+              >svgo-ll</span
+            >
+          </div>
+          <div class="section-buttons">
+            <button id="config-copy" title="Copy to clipboard">
+              <img src="/img/copy.svg" />
+            </button>
+            <button id="config-open" title="Open">
+              <img src="/img/open.svg" />
+            </button>
+            <button id="config-close" title="Close" hidden>
+              <img src="/img/close.svg" />
+            </button>
+          </div>
+        </div>
+        <div class="section-body" id="config-content" hidden>
+          <form class="flex" style="width: 100%">
+            <div class="flex">
+              <div>
+                <input
+                  type="radio"
+                  id="config-use-default"
+                  name="input-type"
+                  checked
+                />
+                <label for="config-use-default">Use default plugins</label>
+              </div>
+              <div>
+                <input type="radio" id="config-use-list" name="input-type" />
+                <label for="config-use-list">Use specific plugins</label>
+              </div>
+            </div>
+            <div class="flex">
+              <div>
+                <label for="config-indent">Indent</label>
+                <select id="config-indent">
+                  <option value="">no formatting</option>
+                  <option value="4">4 spaces</option>
+                  <option value="0">0 spaces</option>
+                  <option value="1">1 space</option>
+                  <option value="2">2 spaces</option>
+                  <option value="8">8 spaces</option>
+                </select>
+              </div>
+              <div>
+                <label for="config-max-passes">Max Passes</label>
+                <select id="config-max-passes">
+                  <option value="10">10</option>
+                  <option value="1">1</option>
+                  <option value="2">2</option>
+                  <option value="3">3</option>
+                  <option value="4">4</option>
+                  <option value="5">5</option>
+                  <option value="6">6</option>
+                  <option value="7">7</option>
+                  <option value="8">8</option>
+                  <option value="9">9</option>
+                </select>
+              </div>
+            </div>
+          </form>
+          <hr />
+          <form id="config-form">
+            <div id="config-select-plugins-default">
+              <fieldset>
+                <div id="default-plugins" class="plugin-checkboxes"></div>
+              </fieldset>
+              <fieldset>
+                <div class="label">Other Plugins:</div>
+                <div id="other-plugins" class="plugin-checkboxes"></div>
+              </fieldset>
+            </div>
+            <div id="config-select-plugins-list">
+              <div id="list-plugins" class="plugin-checkboxes"></div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <div id="input" class="section">
+      <div class="section-content">
+        <div class="section-hdr">
+          <form>
+            <div>Input</div>
+            <div>
+              <input
+                type="radio"
+                id="input-type-xml"
+                name="input-type"
+                checked
+              />
+              <label for="input-type-xml">XML</label>
+            </div>
+            <div>
+              <input type="radio" id="input-type-url" name="input-type" />
+              <label for="input-type-url">URL</label>
+            </div>
+            <div>
+              <input type="radio" id="input-type-file" name="input-type" />
+              <label for="input-type-file">File</label>
+            </div>
+            <div>
+              <input type="radio" id="input-type-image" name="input-type" />
+              <label for="input-type-image">Image</label>
+            </div>
+          </form>
+          <div class="section-buttons">
+            <button id="input-download" title="Download" disabled>
+              <img src="/img/download.svg" />
+            </button>
+            <button id="input-copy" title="Copy to clipboard" disabled>
+              <img src="/img/copy.svg" />
+            </button>
+            <button
+              id="input-newwindow"
+              title="Open image in new window"
+              disabled
+            >
+              <img src="/img/newwindow.svg" />
+            </button>
+            <button id="input-open" title="Open" hidden>
+              <img src="/img/open.svg" />
+            </button>
+            <button id="input-close" title="Close" disabled>
+              <img src="/img/close.svg" />
+            </button>
+          </div>
+        </div>
+        <div class="section-body" id="input-content">
+          <div id="input-url" class="input" hidden>
+            <label for="input-url-control">URL</label>
+            <input id="input-url-control" type="url" />
+          </div>
+          <div id="input-file" class="input" hidden>
+            <input id="input-file-control" type="file" />
+          </div>
+          <textarea
+            id="input-xml"
+            placeholder="Enter XML source code"
+          ></textarea>
+          <iframe id="input-image" hidden></iframe>
+        </div>
+      </div>
+    </div>
+
+    <div id="output" class="section half" hidden>
+      <div class="section-content">
+        <div class="section-hdr">
+          <form>
+            <div>Output</div>
+            <div>
+              <input
+                type="radio"
+                id="output-type-xml"
+                name="output-type"
+                checked
+              />
+              <label for="output-type-xml">XML</label>
+            </div>
+            <div>
+              <input type="radio" id="output-type-image" name="output-type" />
+              <label for="output-type-image">Image</label>
+            </div>
+          </form>
+          <div class="section-buttons">
+            <button id="output-download" title="Download">
+              <img src="/img/download.svg" />
+            </button>
+            <button id="output-copy" title="Copy to clipboard">
+              <img src="/img/copy.svg" />
+            </button>
+            <button id="output-newwindow" title="Open image in new window">
+              <img src="/img/newwindow.svg" />
+            </button>
+            <button id="output-open" title="Open" hidden>
+              <img src="/img/open.svg" />
+            </button>
+            <button id="output-close" title="Close">
+              <img src="/img/close.svg" />
+            </button>
+          </div>
+        </div>
+        <div class="section-body" id="output-content">
+          <textarea id="output-xml" readonly></textarea>
+          <iframe id="output-image" hidden></iframe>
+        </div>
+      </div>
+    </div>
+
+    <div id="info" class="section" hidden>
+      <div class="section-content">
+        <div class="section-hdr">
+          <div>Info</div>
+          <div class="section-buttons">
+            <button id="info-open" title="Open" hidden>
+              <img src="/img/open.svg" />
+            </button>
+            <button id="info-close" title="Close">
+              <img src="/img/close.svg" />
+            </button>
+          </div>
+        </div>
+        <div class="section-body" id="info-content">
+          <div
+            style="
+              display: flex;
+              flex-wrap: wrap;
+              justify-content: space-between;
+            "
+          >
+            <div class="info-table">
+              <div>Input Size:</div>
+              <div id="info-input-size" class="data right"></div>
+              <div>Output Size:</div>
+              <div id="info-output-size" class="data right"></div>
+            </div>
+            <div class="info-table">
+              <div>Bytes Saved:</div>
+              <div id="info-bytes-saved" class="data right"></div>
+              <div>Compression:</div>
+              <div id="info-compression" class="data right"></div>
+            </div>
+            <div class="info-table">
+              <div>Total Time (ms):</div>
+              <div id="info-time" class="data right"></div>
+              <div>Parse Time (ms):</div>
+              <div id="info-parse-time" class="data right"></div>
+              <div>Number of Passes:</div>
+              <div id="info-num-passes" class="data right"></div>
+            </div>
+          </div>
+          <div id="info-plugin-times" class="section-content">
+            <div class="section-hdr">
+              <div>Plugin Times</div>
+              <div class="section-buttons">
+                <button id="info-plugin-times-open" title="Open" hidden>
+                  <img src="/img/open.svg" />
+                </button>
+                <button id="info-plugin-times-close" title="Close">
+                  <img src="/img/close.svg" />
+                </button>
+              </div>
+            </div>
+            <div class="section-body" id="info-plugin-times-content"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script type="module" src="./js/optimize.js"></script>
+  </div>
+</div>
+
+<dialog id="alert-modal">
+  <p id="alert-modal-msg"></p>
+  <button id="alert-modal-close" autofocus>Close</button>
+</dialog>

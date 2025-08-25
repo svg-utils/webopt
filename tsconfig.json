@@ -1,0 +1,17 @@
+{
+  "compilerOptions": {
+    "allowJs": true,
+    "allowImportingTsExtensions": true,
+    "checkJs": true,
+    "declaration": true,
+    "declarationMap": true,
+    "module": "nodenext",
+    "newLine": "lf",
+    "noEmit": true,
+    "rootDir": ".",
+    "skipLibCheck": false,
+    "strict": true
+  },
+  "include": ["**/*.js", "**/*.mjs"],
+  "exclude": ["public"]
+}
