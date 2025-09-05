@@ -4,10 +4,10 @@
     "check": "npm run tsc && npm run eslint && npm run prettier",
     "build": "npm run build-js && npm run build-eleventy",
     "build-js": "npx rollup --config ./config/config-rollup.js",
-    "build-js-dev": "npx rollup --config ./config/config-rollup-dev.js --watch",
+    "build-js-dev": "npx rollup --config ./config/config-rollup-dev.js",
     "build-eleventy": "npx @11ty/eleventy --config config/config-eleventy.js",
     "build-eleventy-dev": "npx @11ty/eleventy --config config/config-eleventy.js --watch",
-    "dev": "rm -rf public && concurrently -k \"npm run build-js-dev\" \"npm run build-eleventy-dev\"",
+    "dev": "rm -rf public && concurrently -k \"npx rollup --config ./config/config-rollup-dev.js --watch\" \"npm run build-eleventy-dev\"",
     "eslint": "eslint",
     "prettier": "prettier -l .",
     "tsc": "tsc"
