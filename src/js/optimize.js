@@ -71,8 +71,8 @@ const BLOB_URLS = {};
 // Generate plugin lists.
 const DEFAULT_PLUGIN_NAMES = new Set();
 
-/** @type {("pre"|"plugins")[]} */
-const phases = ["pre", "plugins"];
+/** @type {("pre"|"plugins"|"post")[]} */
+const phases = ["pre", "plugins", "post"];
 phases.forEach((phase) => {
   for (const plugin of defaultPlugins[phase]) {
     DEFAULT_PLUGIN_NAMES.add(plugin.name);
@@ -177,7 +177,7 @@ function generatePluginList() {
   }
 
   // Clear existing lists.
-  for (const prefix of ["default", "other", "list"]) {
+  for (const prefix of ["default", "optional", "list"]) {
     hdom.removeChildren(`${prefix}-plugins`);
   }
 
@@ -195,7 +195,7 @@ function generatePluginList() {
     }
 
     // Show non-default builtins.
-    const otherDiv = hdom.getElement("other-plugins");
+    const otherDiv = hdom.getElement("optional-plugins");
     for (const builtinName of BUILTIN_PLUGIN_NAMES) {
       if (DEFAULT_PLUGIN_NAMES.has(builtinName)) {
         continue;
