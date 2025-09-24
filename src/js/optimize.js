@@ -70,12 +70,19 @@ const BLOB_URLS = {};
 
 // Generate plugin lists.
 const DEFAULT_PLUGIN_NAMES = new Set();
-for (const plugin of defaultPlugins) {
-  DEFAULT_PLUGIN_NAMES.add(plugin.name);
-}
-const builtins = [];
-for (const plugin of builtinPlugins) {
-  builtins.push(plugin[1]);
+
+/** @type {("pre"|"plugins"|"post")[]} */
+const phases = ["pre", "plugins", "post"];
+phases.forEach((phase) => {
+  for (const plugin of defaultPlugins[phase]) {
+    DEFAULT_PLUGIN_NAMES.add(plugin.name);
+  }
+});
+
+/** @type {string[]} */
+const BUILTIN_PLUGIN_NAMES = [];
+for (const pluginName of builtinPlugins.keys()) {
+  BUILTIN_PLUGIN_NAMES.push(pluginName);
 }
 
 generatePluginList();
@@ -170,7 +177,7 @@ function generatePluginList() {
   }
 
   // Clear existing lists.
-  for (const prefix of ["default", "other", "list"]) {
+  for (const prefix of ["default", "optional", "list"]) {
     hdom.removeChildren(`${prefix}-plugins`);
   }
 
@@ -181,15 +188,15 @@ function generatePluginList() {
   if (useDefaults) {
     // Show defaults.
     const defaultDiv = hdom.getElement("default-plugins");
-    for (const plugin of defaultPlugins) {
+    for (const pluginName of DEFAULT_PLUGIN_NAMES) {
       defaultDiv.appendChild(
-        createCheckBox(`plugin-${plugin.name}`, plugin.name, true),
+        createCheckBox(`plugin-${pluginName}`, pluginName, true),
       );
     }
 
     // Show non-default builtins.
-    const otherDiv = hdom.getElement("other-plugins");
-    for (const [builtinName] of builtinPlugins) {
+    const otherDiv = hdom.getElement("optional-plugins");
+    for (const builtinName of BUILTIN_PLUGIN_NAMES) {
       if (DEFAULT_PLUGIN_NAMES.has(builtinName)) {
         continue;
       }
@@ -199,7 +206,7 @@ function generatePluginList() {
     }
   } else {
     const div = hdom.getElement("list-plugins");
-    for (const [builtinName] of builtinPlugins) {
+    for (const builtinName of BUILTIN_PLUGIN_NAMES) {
       const id = `plugin-${builtinName}`;
       div.appendChild(
         createCheckBox(id, builtinName, false, () => handlePluginClick(id)),
@@ -269,9 +276,9 @@ function getConfig() {
     // Find disabled default plugins.
     /** @type {string[]} */
     const disabled = [];
-    defaultPlugins.forEach((p) => {
-      if (!hdom.isChecked(`plugin-${p.name}`)) {
-        disabled.push(p.name);
+    DEFAULT_PLUGIN_NAMES.forEach((name) => {
+      if (!hdom.isChecked(`plugin-${name}`)) {
+        disabled.push(name);
       }
     });
 
@@ -280,8 +287,7 @@ function getConfig() {
     }
 
     const enabled = [];
-    for (const builtin of builtinPlugins) {
-      const builtinName = builtin[0];
+    for (const builtinName of BUILTIN_PLUGIN_NAMES) {
       if (DEFAULT_PLUGIN_NAMES.has(builtinName)) {
         continue;
       }

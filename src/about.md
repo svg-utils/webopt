@@ -10,3 +10,5 @@ title: About svg-webopt
 All processing is done locally in the browser.
 
 The source code is at <https://github.com/svg-utils/webopt>.
+
+Report any bugs at <https://github.com/svg-utils/webopt/issues>.
