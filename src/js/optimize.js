@@ -1,5 +1,5 @@
 import { optimize, builtinPlugins, defaultPlugins } from "svgo-ll";
-import { hdom } from "./hdom.js";
+import { hdom } from "@htmltools/hdom";
 
 /**
  * @typedef {"input" | "output"} InputOutputPrefix
