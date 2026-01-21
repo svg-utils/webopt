@@ -18,14 +18,14 @@
     "@rollup/plugin-commonjs": "^29.0.0",
     "@rollup/plugin-node-resolve": "^16.0.3",
     "@rollup/plugin-terser": "^0.4.4",
-    "@types/node": "^24.10.0",
+    "@types/node": "^24.10.9",
     "buffer": "^6.0.3",
     "concurrently": "^9.2.1",
-    "eslint": "^9.39.1",
-    "prettier": "^3.6.2",
-    "rollup": "^4.53.1",
+    "eslint": "^9.39.2",
+    "prettier": "^3.8.0",
+    "rollup": "^4.55.2",
     "string_decoder": "^1.3.0",
-    "svgo-ll": "^6.2.0",
+    "svgo-ll": "^6.3.0",
     "typescript": "^5.9.3"
   }
 }
